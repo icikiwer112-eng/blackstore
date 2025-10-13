@@ -1,0 +1,72 @@
+/* Font */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Produk */
+.product-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Toast Notifikasi */
+.toast-notification {
+  animation: slideIn 0.4s ease-out forwards;
+  position: relative;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Checkout Modal Scroll */
+#checkoutModal .max-h-60 {
+  max-height: 15rem;
+}
+
+/* Footer */
+footer a {
+  transition: color 0.2s;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Tombol */
+button {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Input & Select */
+input, textarea, select {
+  outline: none;
+  transition: border 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #34D399; /* hijau */
+  box-shadow: 0 0 0 2px rgba(52,211,153,0.2);
+}
+
+/* Scrollbar kecil untuk modal dan list */
+#cart-items::-webkit-scrollbar,
+div.text-left::-webkit-scrollbar {
+  width: 6px;
+}
+
+#cart-items::-webkit-scrollbar-thumb,
+div.text-left::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
