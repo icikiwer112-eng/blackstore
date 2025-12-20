@@ -1,92 +1,182 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TokoKu - Checkout via WhatsApp</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Stok Gudang Barcode</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    padding: 10px;
+}
+h2, h3 {
+    text-align: center;
+}
+input, select, button {
+    padding: 6px;
+    margin: 4px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    margin-top: 10px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 6px;
+    text-align: center;
+}
+th {
+    background: #333;
+    color: #fff;
+}
+button {
+    cursor: pointer;
+}
+.hapus {
+    background: red;
+    color: white;
+}
+.kirim {
+    background: orange;
+    color: white;
+}
+.retur {
+    background: green;
+    color: white;
+}
+#reader {
+    width: 100%;
+    margin-top: 10px;
+}
+</style>
 </head>
-<body class="bg-gray-900 text-gray-200">
 
-  <!-- Header -->
-  <header class="bg-gray-900 shadow-md sticky top-0 z-40 border-b border-gray-700">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <h1 class="text-3xl font-bold text-white">🛍️ BLACKSTORE</h1>
-      <button id="openCartBtn" class="relative">
-        <i class="fas fa-shopping-cart text-white text-2xl"></i>
-        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
-      </button>
-    </div>
-  </header>
+<body>
 
-  <!-- Main Content -->
-  <main class="container mx-auto p-4 md:p-8">
+<h2>Aplikasi Stok Gudang Barcode</h2>
 
-    <!-- Loader -->
-    <div id="loader" class="text-center py-10">
-      <i class="fas fa-spinner fa-spin text-4xl text-green-500"></i>
-      <p class="mt-2 text-gray-400">Memuat produk...</p>
-    </div>
+<div>
+    <input type="date" id="tanggal">
+    <input type="text" id="barcode" placeholder="Scan Barcode">
+    <input type="text" id="product" placeholder="Nama Produk">
+    <input type="number" id="qty" placeholder="Qty">
+    <input type="number" id="hargaBeli" placeholder="Harga Beli">
+    <input type="number" id="hargaJual" placeholder="Harga Jual">
+    <select id="tipe">
+        <option value="masuk">Barang Masuk</option>
+        <option value="kirim">Kirim Paket</option>
+        <option value="retur">Retur</option>
+    </select>
+    <br>
+    <button onclick="scanBarcode()">📷 Scan Barcode</button>
+    <button onclick="tambahData()">Simpan</button>
+</div>
 
-    <!-- Filter & Search -->
-    <div class="flex flex-col md:flex-row justify-between mb-4 gap-3">
-      <input id="searchInput" type="text" placeholder="Cari produk..." class="w-full md:w-1/2 px-3 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500">
-      <select id="categoryFilter" class="w-full md:w-1/4 px-3 py-2 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500">
-        <option value="">Semua Kategori</option>
-      </select>
-    </div>
+<div id="reader"></div>
 
-    <!-- Product Grid -->
-    <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+<table>
+<thead>
+<tr>
+    <th>No</th>
+    <th>Tanggal</th>
+    <th>Produk</th>
+    <th>Qty</th>
+    <th>Harga Beli</th>
+    <th>Harga Jual</th>
+    <th>Laba</th>
+    <th>Jumlah</th>
+    <th>Status</th>
+    <th>Aksi</th>
+</tr>
+</thead>
+<tbody id="tabelData"></tbody>
+</table>
 
-    <!-- Error Message -->
-    <div id="error-message" class="hidden text-center bg-red-800 text-red-200 p-4 rounded-lg">
-      <p>Gagal memuat produk. Silakan coba lagi nanti.</p>
-    </div>
-  </main>
+<h3>Total Laba Bulanan: Rp <span id="totalBulanan">0</span></h3>
 
-  <!-- Checkout Modal -->
-  <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
-    <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-lg overflow-y-auto p-6 text-gray-200">
-      <h3 class="text-2xl font-bold mb-4 text-center text-white">🧾 Checkout Pesanan</h3>
+<script src="https://unpkg.com/html5-qrcode"></script>
 
-      <div id="cart-items" class="mb-4 text-sm max-h-60 overflow-y-auto border rounded p-3 bg-gray-700"></div>
+<script>
+let data = JSON.parse(localStorage.getItem("stokGudang")) || [];
 
-      <form id="checkoutForm" class="space-y-3">
-        <input type="text" id="name" placeholder="Nama lengkap" class="w-full border border-gray-600 rounded-lg px-3 py-2 bg-gray-700 text-gray-200" required>
-        <textarea id="address" placeholder="Alamat lengkap" rows="3" class="w-full border border-gray-600 rounded-lg px-3 py-2 bg-gray-700 text-gray-200" required></textarea>
-        <input type="tel" id="phone" placeholder="Nomor WhatsApp (contoh: 081234567890)" class="w-full border border-gray-600 rounded-lg px-3 py-2 bg-gray-700 text-gray-200" required>
-        
-        <select id="paymentMethod" class="w-full border border-gray-600 rounded-lg px-3 py-2 bg-gray-700 text-gray-200" required>
-          <option value="">Pilih Metode Pembayaran</option>
-          <option value="BCA">BCA</option>
-          <option value="BRI">BRI</option>
-          <option value="BNI">BNI</option>
-          <option value="DANA">DANA</option>
-          <option value="COD">COD</option>
-        </select>
-        <p id="paymentInfo" class="text-sm text-green-400 hidden"></p>
+function simpan() {
+    localStorage.setItem("stokGudang", JSON.stringify(data));
+    tampil();
+}
 
-        <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 flex items-center justify-center space-x-2">
-          <i class="fab fa-whatsapp"></i><span>Buat Pesanan via WhatsApp</span>
-        </button>
-      </form>
+function tambahData() {
+    let tgl = tanggal.value;
+    let produk = product.value;
+    let qtyVal = parseInt(qty.value);
+    let beli = parseInt(hargaBeli.value);
+    let jual = parseInt(hargaJual.value);
+    let tipe = document.getElementById("tipe").value;
 
-      <button id="closeCheckout" class="mt-4 w-full py-2 text-center text-gray-300 hover:text-white">Batal</button>
-    </div>
-  </div>
+    if (tipe === "kirim" || tipe === "retur") {
+        qtyVal = -Math.abs(qtyVal);
+    }
 
-  <!-- Toast Notification -->
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50"></div>
+    let laba = (jual - beli) * qtyVal;
+    let jumlah = jual * qtyVal;
 
-  <!-- Footer -->
-  <footer class="bg-gray-900 border-t border-gray-700 mt-10 p-6 text-gray-400 text-center">
-    &copy; OFFICIAL WEB BLACKSTORE 2025
-    
-  </footer>
+    data.push({
+        tgl, produk, qty: qtyVal,
+        beli, jual, laba, jumlah, tipe
+    });
 
-  <script src="script.js"></script>
+    simpan();
+}
+
+function tampil() {
+    let html = "";
+    let total = 0;
+
+    data.forEach((d, i) => {
+        total += d.laba;
+        html += `
+        <tr>
+            <td>${i + 1}</td>
+            <td>${d.tgl}</td>
+            <td>${d.produk}</td>
+            <td>${d.qty}</td>
+            <td>${d.beli}</td>
+            <td>${d.jual}</td>
+            <td>${d.laba}</td>
+            <td>${d.jumlah}</td>
+            <td>${d.tipe}</td>
+            <td>
+                <button class="hapus" onclick="hapus(${i})">Hapus</button>
+            </td>
+        </tr>`;
+    });
+
+    tabelData.innerHTML = html;
+    totalBulanan.innerText = total;
+}
+
+function hapus(i) {
+    data.splice(i, 1);
+    simpan();
+}
+
+function scanBarcode() {
+    document.getElementById("reader").innerHTML = "";
+    const reader = new Html5Qrcode("reader");
+    reader.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        code => {
+            barcode.value = code;
+            reader.stop();
+        }
+    );
+}
+
+tampil();
+</script>
+
 </body>
 </html>
