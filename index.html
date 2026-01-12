@@ -2,180 +2,565 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Stok Gudang Barcode</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FYRENSTORE</title>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    padding: 10px;
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#fff;color:#111}
+
+/* ================= HEADER ================= */
+header{
+position:sticky;top:0;z-index:999;
+background:#fff;border-bottom:1px solid #eee;
+padding:12px 16px;
+display:flex;justify-content:space-between;align-items:center
 }
-h2, h3 {
-    text-align: center;
+.header-left{display:flex;align-items:center;gap:16px}
+.store-name{font-weight:900;font-size:18px}
+
+/* KATEGORI */
+.header-right{display:flex;align-items:center;gap:14px;position:relative}
+
+.category-btn{
+font-weight:700;font-size:14px;
+cursor:pointer;padding:6px 8px;border-radius:6px
 }
-input, select, button {
-    padding: 6px;
-    margin: 4px;
+.category-btn:hover{background:#f2f2f2}
+
+.category-menu{
+position:absolute;top:38px;right:40px;
+background:#fff;border:1px solid #eee;
+border-radius:8px;overflow:hidden;
+display:none;min-width:140px
 }
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    margin-top: 10px;
+.category-menu div{
+padding:10px;font-size:14px;cursor:pointer
 }
-th, td {
-    border: 1px solid #ddd;
-    padding: 6px;
-    text-align: center;
+.category-menu div:hover{background:#f5f5f5}
+.category-menu.active{display:block}
+
+.cart-btn{
+background:none;border:none;cursor:pointer;
+display:flex;align-items:center;gap:6px
 }
-th {
-    background: #333;
-    color: #fff;
+.cart-btn img{width:26px}
+.cart-btn span{font-weight:700}
+
+/* ================= HERO ================= */
+.hero{
+height:80vh;background:#000;overflow:hidden;
+position:relative;margin-bottom:40px
 }
-button {
-    cursor: pointer;
+.hero video{width:100%;height:100%;object-fit:cover}
+.hero-text{
+position:absolute;bottom:30px;left:30px;
+font-size:32px;font-weight:900;color:#fff
 }
-.hapus {
-    background: red;
-    color: white;
+
+/* ================= PRODUCTS ================= */
+.container{display:flex;justify-content:center;padding-bottom:60px}
+.products{
+width:100%;max-width:1100px;
+display:grid;grid-template-columns:repeat(3,1fr);
+gap:32px;padding:0 20px
 }
-.kirim {
-    background: orange;
-    color: white;
+.product{text-align:center;cursor:pointer}
+.product img{
+width:100%;aspect-ratio:1/1;
+object-fit:cover;border-radius:14px
 }
-.retur {
-    background: green;
-    color: white;
+.product b{display:block;margin-top:12px;font-size:20px}
+.price{font-weight:700}
+
+@media(max-width:768px){.products{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.products{grid-template-columns:repeat(2,1fr)}}
+
+/* ================= MODAL ================= */
+.modal{
+position:fixed;inset:0;
+background:rgba(0,0,0,.7);
+display:none;align-items:center;justify-content:center;
+z-index:200
 }
-#reader {
-    width: 100%;
-    margin-top: 10px;
+.modal.active{display:flex}
+.modal-box{
+background:#fff;border-radius:12px;
+width:95%;max-width:800px;overflow:hidden
 }
+.modal-inner{display:flex;flex-direction:column}
+.modal-img img{width:100%}
+.modal-content{padding:16px}
+
+@media(min-width:768px){
+.modal-inner{flex-direction:row}
+.modal-img,.modal-content{width:50%}
+}
+
+.option-group{display:flex;gap:10px;margin-bottom:10px}
+.option-box{
+border:1px solid #ccc;padding:8px 14px;
+border-radius:6px;cursor:pointer
+}
+.option-box.active{background:#000;color:#fff}
+
+/* ================= CART ================= */
+.cart{
+position:fixed;top:0;right:-100%;
+width:100%;max-width:380px;height:100%;
+background:#fff;z-index:300;
+transition:.3s;border-left:1px solid #eee;
+display:flex;flex-direction:column
+}
+.cart.active{right:0}
+.cart header{background:#000;color:#fff;padding:14px}
+.cart-items{flex:1;overflow:auto;padding:10px}
+
+.cart-item{display:flex;gap:10px;margin-bottom:14px}
+.cart-item img{
+width:60px;height:60px;
+object-fit:cover;border-radius:6px
+}
+.qty{display:flex;gap:6px;margin-top:6px}
+.qty button{
+width:26px;height:26px;
+border:none;background:#000;color:#fff;cursor:pointer
+}
+.remove{background:none;border:none;color:red;font-size:12px;cursor:pointer}
+
+.checkout{
+background:#000;color:#fff;border:none;
+padding:12px;border-radius:6px;
+width:100%;margin-top:10px;cursor:pointer
+}
+.checkout[disabled]{opacity:0.6;cursor:not-allowed}
+select,input{width:100%;padding:10px;margin-top:8px}
+.upload-box{
+border:2px dashed #000;padding:12px;
+text-align:center;margin-top:12px;font-size:13px
+}
+/* ================= FOOTER ================= */
+.site-footer{background:#111;color:#fff;padding:40px 20px;text-align:center}
+.site-footer h4{margin:0 0 12px;font-weight:700}
+.logos{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.logo{display:inline-flex;align-items:center;justify-content:center;width:84px;height:36px;background:#1a1a1a;border-radius:6px;color:#fff;font-weight:700}
+.copyright{margin-top:18px;color:#bbb;font-size:13px}
 </style>
 </head>
 
 <body>
 
-<h2>Aplikasi Stok Gudang Barcode</h2>
+<!-- ================= HEADER ================= -->
+<header>
+  <div class="header-left">
+    <div class="store-name">FYRENSTORE</div>
+  </div>
 
-<div>
-    <input type="date" id="tanggal">
-    <input type="text" id="barcode" placeholder="Scan Barcode">
-    <input type="text" id="product" placeholder="Nama Produk">
-    <input type="number" id="qty" placeholder="Qty">
-    <input type="number" id="hargaBeli" placeholder="Harga Beli">
-    <input type="number" id="hargaJual" placeholder="Harga Jual">
-    <select id="tipe">
-        <option value="masuk">Barang Masuk</option>
-        <option value="kirim">Kirim Paket</option>
-        <option value="retur">Retur</option>
-    </select>
-    <br>
-    <button onclick="scanBarcode()">📷 Scan Barcode</button>
-    <button onclick="tambahData()">Simpan</button>
+  <div class="header-right">
+    <div class="category-btn" onclick="toggleCategory()">Kategori</div>
+
+    <div class="category-menu" id="catMenu">
+      <div onclick="goCat('heroA')">BREADTHEDIVINITY</div>
+      <div onclick="goCat('heroB')">CALLE</div>
+      <div onclick="goCat('heroCHMB')">CHMB</div>
+    </div>
+
+    <button class="cart-btn" onclick="toggleCart()">
+      <img src="img/cart.png">
+      <span id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<!-- ================= HERO A ================= -->
+<div class="hero" id="heroA">
+<video autoplay muted loop playsinline>
+<source src="img/br.mp4" type="video/mp4">
+</video>
+<div class="hero-text">BREADTHEDIVINITY</div>
 </div>
 
-<div id="reader"></div>
+<div class="container">
+<div class="products" id="productsA"></div>
+</div>
 
-<table>
-<thead>
-<tr>
-    <th>No</th>
-    <th>Tanggal</th>
-    <th>Produk</th>
-    <th>Qty</th>
-    <th>Harga Beli</th>
-    <th>Harga Jual</th>
-    <th>Laba</th>
-    <th>Jumlah</th>
-    <th>Status</th>
-    <th>Aksi</th>
-</tr>
-</thead>
-<tbody id="tabelData"></tbody>
-</table>
+<!-- ================= HERO B ================= -->
+<div class="hero" id="heroB">
+<video autoplay muted loop playsinline>
+<source src="img/snb.mp4" type="video/mp4">
+</video>
+<div class="hero-text">CALLE</div>
+</div>
 
-<h3>Total Laba Bulanan: Rp <span id="totalBulanan">0</span></h3>
+<div class="container">
+<div class="products" id="productsB"></div>
+</div>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<!-- ================= HERO C ================= -->
+<div class="hero" id="heroC">
+<video autoplay muted loop playsinline>
+<source src="img/heroC.mp4" type="video/mp4">
+</video>
+<div class="hero-text">CHMB</div>
+</div>
+
+<div class="container">
+<div class="products" id="productsC"></div>
+</div>
+
+<!-- ================= HERO CHMB ================= -->
+<div class="hero" id="heroCHMB">
+<video autoplay muted loop playsinline>
+<source src="img/chmb.mp4" type="video/mp4">
+</video>
+<div class="hero-text">CHMB</div>
+</div>
+
+<div class="container">
+<div class="products" id="productsCHMB"></div>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div class="modal" id="detailModal">
+<div class="modal-box">
+<div class="modal-inner">
+<div class="modal-img"><img id="dImg"></div>
+<div class="modal-content">
+<h3 id="dName"></h3>
+<p id="dPrice" class="price"></p>
+<p id="dDesc"></p>
+
+<b>Ukuran</b>
+<div class="option-group">
+<div class="option-box active">M</div>
+<div class="option-box">L</div>
+<div class="option-box">XL</div>
+</div>
+
+<b>Warna</b>
+<div class="option-group">
+<div class="option-box active">Hitam</div>
+<div class="option-box">Putih</div>
+</div>
+
+<button class="checkout" onclick="addToCart()">ADD TO CART</button>
+<button class="checkout" onclick="closeDetail()">Tutup</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ================= CART ================= -->
+<div class="cart" id="cart">
+<header>CHECKOUT</header>
+<div class="cart-items" id="cartItems"></div>
+
+<div style="padding:12px">
+<p><b>Total:</b> <span id="total">Rp 0</span></p>
+
+
+<select id="paymentMethod"><option>Transfer Bank
+</option><option>BCA 2891337250 MUHAMMAD ALDO WIMADA
+  </option><option>BRI 007001111261504 MARIDA
+    </option><option>DANA 089615170747 MARIDA
+     </option><option> SALDO SHOPEE 2891337250 MUHAMMAD ALDO WIMADA
+</option></select>
+
+<select id="shippingMethod"><option>JNE
+</option><option>J&T
+  </option><option>AMBIL LANGSUNG
+</option></select>
+
+<div class="upload-box">
+<b>MOHON SELESAIKAN TRANSAKSI<br>DAN UPLOAD BUKTI</b>
+<input type="file" id="proofUpload">
+</div>
+
+<button id="checkoutBtn" class="checkout" onclick="checkoutWA()" disabled>Checkout WhatsApp</button>
+<button class="checkout" onclick="toggleCart()">Tutup</button>
+</div>
+</div>
+
+<!-- ================= QUEUE NOTICE ================= -->
+<!-- ================= SITE FOOTER ================= -->
+<footer class="site-footer">
+  <div>
+    <h4>Payment Method</h4>
+    <div class="logos" aria-hidden="true">
+      <div class="logo">BCA</div>
+      <div class="logo">BRI</div>
+      <div class="logo">DANA</div>
+      <div class="logo">OVO</div>
+      <div class="logo">VISA</div>
+      <div class="logo">MC</div>
+    </div>
+  </div>
+
+  <div style="margin-top:18px">
+    <h4>Shipment Method</h4>
+    <div class="logos" aria-hidden="true">
+      <div class="logo">JNE</div>
+      <div class="logo">J&T</div>
+      <div class="logo">GOSEND</div>
+      <div class="logo">ANTERAJA</div>
+      <div class="logo">DHL</div>
+    </div>
+  </div>
+
+  <div class="copyright">&copy; <span id="year"></span> FYRENSTORE. All rights reserved.</div>
+</footer>
+<div class="modal" id="queueNotice">
+  <div class="modal-box">
+    <div style="padding:20px;text-align:center">
+      <h3>Nomor Antrian</h3>
+      <p id="queueNumber" style="font-size:28px;font-weight:900;margin:8px 0"></p>
+      <p id="queueEta" style="margin:6px 0;color:#555"></p>
+      <p id="queueCountdown" style="margin:6px 0;color:#000"></p>
+      <button class="checkout" id="queueCancel">Batal</button>
+    </div>
+  </div>
+</div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("stokGudang")) || [];
+const productsA=[
+{id:1,name:'Balaclava drev',price:157000,img:'img/nt.webp',desc:'Premium gym wear'},
+{id:2,name:'Balaclava hegon',price:157000,img:'img/ntnt.webp',desc:'Premium gym wear'}
+];
+const productsB=[
+{id:3,name:'CREW PINK T-SHIRT',price:78000,img:'img/crew.jpeg',desc:'Limited edition'},
+{id:4,name:'Balaclava Grey',price:78000,img:'img/chb.png',desc:'New Drop'},
+{id:5,name:'Balaclava Grey',price:78000,img:'img/calsnb.jpeg',desc:'New Drop'},
+{id:55,name:'Balaclava Grey',price:54000,img:'img/mask.jpeg',desc:'New Drop'},
+{id:45,name:'Stiker CalleSbsb',price:16000,img:'img/sti.jpeg',desc:'New Drop'}
+];
+const productsC=[
+  {id:10,name:'Bero C - Black',price:65000,img:'img/bero_c.jpg',desc:'C terbaru - Black'},
+  {id:11,name:'Bero C - White',price:65000,img:'img/bero_c_white.jpg',desc:'C terbaru - White'},
+  {id:12,name:'Bero C - Limited',price:75000,img:'img/bero_c_limited.jpg',desc:'Special edition'}
+];
+const productsCHMB = [
+  {id:20, name:'CHMB Mask A', price:45000, img:'img/chb.png', desc:'CHMB series A'},
+  {id:21, name:'CHMB Mask B', price:47000, img:'img/chb.png', desc:'CHMB series B'},
+  {id:22, name:'CHMB Exclusive', price:90000, img:'img/chb.png', desc:'CHMB exclusive'}
+];
+let cart=[],current=null;
+const cartEl=document.getElementById('cart');
+const cartItems=document.getElementById('cartItems');
+const cartCount=document.getElementById('cartCount');
+const totalEl=document.getElementById('total');
 
-function simpan() {
-    localStorage.setItem("stokGudang", JSON.stringify(data));
-    tampil();
+function rupiah(n){return 'Rp '+n.toLocaleString('id-ID')}
+
+function render(list,el){
+el.innerHTML='';
+list.forEach(p=>{
+el.innerHTML+=`
+<div class="product" onclick="openDetail(${p.id})">
+<img src="${p.img}">
+<b>${p.name}</b>
+<div class="price">${rupiah(p.price)}</div>
+</div>`;
+});
 }
+render(productsA,document.getElementById('productsA'));
+render(productsB,document.getElementById('productsB'));
+render(productsC,document.getElementById('productsC'));
+render(productsCHMB,document.getElementById('productsCHMB'));
 
-function tambahData() {
-    let tgl = tanggal.value;
-    let produk = product.value;
-    let qtyVal = parseInt(qty.value);
-    let beli = parseInt(hargaBeli.value);
-    let jual = parseInt(hargaJual.value);
-    let tipe = document.getElementById("tipe").value;
+function openDetail(id){
+  current=[...productsA,...productsB,...productsC,...productsCHMB].find(p=>p.id===id);
+  if(!current) return; // guard if product not found
+  dImg.src=current.img;
+  dName.innerText=current.name;
+  dPrice.innerText=rupiah(current.price);
+  dDesc.innerText=current.desc;
+  detailModal.classList.add('active');
+}
+function closeDetail(){detailModal.classList.remove('active')}
 
-    if (tipe === "kirim" || tipe === "retur") {
-        qtyVal = -Math.abs(qtyVal);
+document.addEventListener('click',e=>{
+if(e.target.classList.contains('option-box')){
+[...e.target.parentNode.children].forEach(o=>o.classList.remove('active'));
+e.target.classList.add('active');
+}
+});
+
+function addToCart(){
+  // read selected size and color from modal
+  let size = '';
+  let color = '';
+  try{
+    const groups = detailModal.querySelectorAll('.option-group');
+    if(groups && groups.length>0){
+      const s = groups[0].querySelector('.option-box.active');
+      const c = groups[1].querySelector('.option-box.active');
+      if(s) size = s.innerText.trim();
+      if(c) color = c.innerText.trim();
     }
+  }catch(e){/* ignore */}
 
-    let laba = (jual - beli) * qtyVal;
-    let jumlah = jual * qtyVal;
-
-    data.push({
-        tgl, produk, qty: qtyVal,
-        beli, jual, laba, jumlah, tipe
-    });
-
-    simpan();
+  // merge same product with same options
+  let ex = cart.find(i=>i.id===current.id && i.size===size && i.color===color);
+  if(ex) ex.qty++;
+  else cart.push({...current,qty:1,size,color});
+  updateCart();closeDetail();
 }
 
-function tampil() {
-    let html = "";
-    let total = 0;
-
-    data.forEach((d, i) => {
-        total += d.laba;
-        html += `
-        <tr>
-            <td>${i + 1}</td>
-            <td>${d.tgl}</td>
-            <td>${d.produk}</td>
-            <td>${d.qty}</td>
-            <td>${d.beli}</td>
-            <td>${d.jual}</td>
-            <td>${d.laba}</td>
-            <td>${d.jumlah}</td>
-            <td>${d.tipe}</td>
-            <td>
-                <button class="hapus" onclick="hapus(${i})">Hapus</button>
-            </td>
-        </tr>`;
-    });
-
-    tabelData.innerHTML = html;
-    totalBulanan.innerText = total;
+function updateCart(){
+cartItems.innerHTML='';
+let total=0,count=0;
+cart.forEach((i,idx)=>{
+total+=i.price*i.qty;
+count+=i.qty;
+    cartItems.innerHTML+=`
+<div class="cart-item">
+<img src="${i.img}">
+<div>
+<b>${i.name}</b><br><small>${i.size?i.size+" / ":""}${i.color?i.color:""}</small><br>${rupiah(i.price*i.qty)}
+<div class="qty">
+<button onclick="changeQty(${idx},-1)">-</button>
+<span>${i.qty}</span>
+<button onclick="changeQty(${idx},1)">+</button>
+<button class="remove" onclick="removeItem(${idx})">hapus</button>
+</div>
+</div>
+</div>`;
+});
+totalEl.innerText=rupiah(total);
+cartCount.innerText=count;
 }
 
-function hapus(i) {
-    data.splice(i, 1);
-    simpan();
+function changeQty(i,v){
+cart[i].qty+=v;
+if(cart[i].qty<=0)cart.splice(i,1);
+updateCart();
+}
+function removeItem(i){cart.splice(i,1);updateCart()}
+function toggleCart(){cartEl.classList.toggle('active')}
+
+function toggleCategory(){
+document.getElementById('catMenu').classList.toggle('active');
+}
+function goCat(id){
+document.getElementById('catMenu').classList.remove('active');
+document.getElementById(id).scrollIntoView({behavior:'smooth'});
 }
 
-function scanBarcode() {
-    document.getElementById("reader").innerHTML = "";
-    const reader = new Html5Qrcode("reader");
-    reader.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        code => {
-            barcode.value = code;
-            reader.stop();
-        }
-    );
+function checkoutWA(){
+  if(cart.length===0){
+    alert('Keranjang kosong');
+    return;
+  }
+
+  // require proof upload
+  const proofEl = document.getElementById('proofUpload');
+  if(!proofEl || !proofEl.files || proofEl.files.length===0){
+    alert('Harap upload bukti transaksi (screenshot) terlebih dahulu.');
+    return;
+  }
+
+  // generate queue number between 1 and 20, and random ETA between 9 and 20 seconds
+  const queueNum = Math.floor(Math.random() * 20) + 1; // 1-20
+  const eta = Math.floor(Math.random() * (20 - 9 + 1)) + 9; // 9-20 seconds (inclusive)
+
+  const queueNotice = document.getElementById('queueNotice');
+  const queueNumberEl = document.getElementById('queueNumber');
+  const queueEtaEl = document.getElementById('queueEta');
+  const queueCountdownEl = document.getElementById('queueCountdown');
+  const queueCancel = document.getElementById('queueCancel');
+  const paymentEl = document.getElementById('paymentMethod');
+  const shippingEl = document.getElementById('shippingMethod');
+
+  queueNumberEl.innerText = `#${queueNum}`;
+  queueEtaEl.innerText = `Estimasi masuk ke WhatsApp dalam ${eta} detik`;
+  queueCountdownEl.innerText = `Menunggu: ${eta}s`;
+  queueNotice.classList.add('active');
+  // open a blank tab immediately to avoid popup blocking, will navigate later
+  let newWindow = null;
+  try{ newWindow = window.open('about:blank', '_blank'); }catch(e){ newWindow = null; }
+
+  // allow cancelling
+  let countInterval = null;
+  queueCancel.onclick = () => {
+    queueNotice.classList.remove('active');
+    if(countInterval) clearInterval(countInterval);
+    if(newWindow && !newWindow.closed) newWindow.close();
+  };
+
+  // start countdown then open WhatsApp with professional receipt
+  let remaining = eta;
+  queueCountdownEl.innerText = `Menunggu: ${remaining}s`;
+  countInterval = setInterval(()=>{
+    remaining--;
+    if(remaining<=0){
+      clearInterval(countInterval);
+      queueNotice.classList.remove('active');
+
+      // build professional nota (receipt)
+      const now = new Date();
+      const dateStr = now.toLocaleString('id-ID');
+      const orderId = 'FYR' + now.getTime();
+
+      let subtotal = 0;
+      let lines = '';
+      cart.forEach((i, idx) => {
+        const itemTotal = i.price * i.qty;
+        subtotal += itemTotal;
+        const opt = ` ${i.size?('('+i.size+(i.color?'/'+i.color:'')+')'): (i.color?('('+i.color+')'):'')}`;
+        lines += `${idx+1}. ${i.name}${opt} - ${i.qty} x Rp ${i.price.toLocaleString('id-ID')} = Rp ${itemTotal.toLocaleString('id-ID')}\n`;
+      });
+
+      const total = subtotal;
+      const paymentText = paymentEl ? paymentEl.value.trim() : '';
+      const shippingText = shippingEl ? shippingEl.value.trim() : '';
+
+      let msg = `FYRENSTORE - NOTA PEMBELIAN\n`;
+      msg += `Order ID: ${orderId}\n`;
+      msg += `Tanggal: ${dateStr}\n\n`;
+      msg += `Items:\n${lines}\n`;
+      msg += `Subtotal: Rp ${subtotal.toLocaleString('id-ID')}\n`;
+      msg += `Total: Rp ${total.toLocaleString('id-ID')}\n\n`;
+      // determine payment status (example: BCA => Lunas)
+      let paymentStatus = 'Menunggu Konfirmasi';
+      if(paymentText && paymentText.toUpperCase().includes('BCA')) paymentStatus = 'Lunas';
+
+      msg += `Pembayaran: ${paymentText} (${paymentStatus})\n`;
+      msg += `Pengiriman: ${shippingText}\n`;
+      msg += `Nomor Antrian: #${queueNum}\n`;
+      msg += `Estimasi: ${eta} detik\n\n`;
+      msg += `Terima kasih atas pesanan Anda.`;
+
+      const encoded = encodeURIComponent(msg);
+      const waUrl = 'https://wa.me/62881027702971?text='+encoded;
+      if(newWindow && !newWindow.closed){
+        try{ newWindow.location.href = waUrl; }
+        catch(e){ window.open(waUrl); }
+      } else {
+        window.open(waUrl);
+      }
+    } else {
+      queueCountdownEl.innerText = `Menunggu: ${remaining}s`;
+    }
+  },1000);
 }
 
-tampil();
+// enable/disable checkout button based on proof upload
+(function(){
+  const proof = document.getElementById('proofUpload');
+  const btn = document.getElementById('checkoutBtn');
+  if(!btn) return;
+  function update(){
+    if(proof && proof.files && proof.files.length>0) btn.disabled = false;
+    else btn.disabled = true;
+  }
+  if(proof){
+    proof.addEventListener('change', update);
+  }
+  // initial
+  update();
+})();
+// set footer year
+try{ document.getElementById('year').innerText = new Date().getFullYear(); }catch(e){}
 </script>
 
 </body>
